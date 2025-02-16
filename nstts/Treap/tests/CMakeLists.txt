@@ -1,8 +1,10 @@
-include(../cmake/GoogleTest.cmake)  # Подключаем GTest
+include(../cmake/GoogleTest.cmake)
 
-enable_testing()
 
 add_executable(test_runner tests.cpp)
-target_link_libraries(test_runner PRIVATE gtest gtest_main)
+target_link_libraries(test_runner gtest gtest_main treap_src)
+target_include_directories(test_runner PRIVATE ../src)
 
-add_test(NAME GoogleTests COMMAND test_runner)
+
+enable_testing()
+add_test(NAME TreapTests COMMAND test_runner)
