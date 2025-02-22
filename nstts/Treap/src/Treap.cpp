@@ -1,21 +1,22 @@
 
 #include "Treap.h"
 #include <cstdlib>
+#include <iostream>
 #include <optional>
+#include <ostream>
 #include <utility>
 
 using m = Treap;
 
-Treap* m::clone() const {
-  auto* t = new Treap(value.value());
-  t->left = left;
-  t->right = right;
-  t->key_ = key_;
-  return t;
+m::Treap(const Treap& other)
+    : key_(other.key_), value(other.value.value()), left(other.left),
+      right(other.right) {
 }
 
+Treap& m::operator=(const Treap& other) = default;
+
 void m::free() {
-  left = nullptr;
+  left  = nullptr;
   right = nullptr;
   delete this;
 }
@@ -25,9 +26,9 @@ void m::insert(int value) {
     this->value.emplace(value);
     return;
   }
-  const auto   copy_this = this->clone();
-  auto         [t1, t2]  = copy_this->split(value);
-  auto*        node      = new Treap(value);
+  auto copy_this = new Treap(*this);
+  auto [t1, t2]        = copy_this->split(value);
+  auto* node           = new Treap(value);
   *this = *(t1 ? node->merge(t1->merge(t2)) : node->merge(t2->merge(t1)));
   if (node->key_ < copy_this->key_)
     node->free();
@@ -35,12 +36,7 @@ void m::insert(int value) {
     copy_this->free();
 }
 
-
-m::Treap() {
-  key_  = rand();
-  left  = nullptr;
-  right = nullptr;
-  value = std::nullopt;
+m::Treap() : key_(rand()), value(std::nullopt), left(nullptr), right(nullptr) {
 }
 
 m::Treap(const int value) : Treap() {
@@ -58,13 +54,13 @@ std::pair<Treap*, Treap*> m::split(const int k) {
     if (!right)
       return {this, nullptr};
     auto [rl, rr] = right->split(k);
-    right = rl;
+    right         = rl;
     return {this, rr};
   } else {
     if (!left)
       return {this, nullptr};
     auto [ll, lr] = left->split(k);
-    left = lr;
+    left          = lr;
     return {ll, this};
   }
 }

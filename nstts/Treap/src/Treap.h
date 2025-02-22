@@ -15,16 +15,18 @@ public:
   Treap();
   explicit Treap(int value);
   ~Treap();
+  Treap(const Treap& other);
+  Treap& operator=(const Treap& other);
+
 private:
   std::pair<Treap*, Treap*> split(int k);
   Treap*                    merge(Treap* t);
 
 public:
-  [[nodiscard]] Treap* clone() const;
   void free();
-  void   insert(int value);
-  void   remove(int value);
-  int    sum() const;
+  void insert(int value);
+  void remove(int value);
+  int  sum() const;
 };
 
 
