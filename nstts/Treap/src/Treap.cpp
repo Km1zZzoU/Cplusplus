@@ -8,13 +8,32 @@
 
 using m = Treap;
 
+/* RE: about copy constructors
+ * the main thing about them - they really should copy your data
+ * It is looks too unefficient, but they should, they created for that purpuse
+ * --
+ * This implementation behave the same way as defaulted one
+ * it is just copying _pointers_ to _data_, but not the _data_ itself 
+ *
+ * Please take a look to the test that I written, the problem is in copying pointers
+ * If pointers is copied I can't using this ctr to copy this ds to function
+ * cause _data_ under the pointer can be freed
+ *
+ * --
+ * I ask you to implement copy ctr that creates new data that copied from the existing one
+ */
 m::Treap(const Treap& other)
     : key_(other.key_), value(other.value.value()), left(other.left),
       right(other.right) {
 }
 
+/* RE: same as above */
 Treap& m::operator=(const Treap& other) = default;
 
+/* Note: strange free
+ * Memory can leak if we will use this function
+ * I don't think that this function can be public
+ */
 void m::free() {
   left  = nullptr;
   right = nullptr;
@@ -47,7 +66,6 @@ m::~Treap() {
   delete left;
   delete right;
 }
-
 
 std::pair<Treap*, Treap*> m::split(const int k) {
   if (k > value) {
