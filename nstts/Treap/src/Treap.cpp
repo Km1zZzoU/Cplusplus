@@ -1,24 +1,70 @@
 
 #include "Treap.h"
 #include <cstdlib>
-#include <iostream>
 #include <optional>
-#include <ostream>
+#include <sys/types.h>
 #include <utility>
 
 using m = Treap;
 
-m::Treap(const Treap& other)
-    : key_(other.key_), value(other.value.value()), left(other.left),
-      right(other.right) {
+Treap* m::clone() const {
+  const auto clone = new Treap();
+  clone->key_ = key_;
+  clone->value = value;
+
+  if (left)
+    clone->left = left->clone();
+  if (right)
+    clone->right = right->clone();
+
+  return clone;
 }
 
-Treap& m::operator=(const Treap& other) = default;
+m::Treap(const Treap& other)
+    : key_(other.key_), value(other.value.value()) {
+  if (other.left != nullptr)
+    left = other.left->clone();
+  else
+    left = nullptr;
+
+  if (other.right != nullptr)
+    right = other.right->clone();
+  else
+    right = nullptr;
+}
+
+m::Treap(Treap&& other) : key_(other.key_), value(other.value) {
+  left  = other.left;
+  right = other.right;
+
+  other.left  = nullptr;
+  other.right = nullptr;
+}
+
+Treap& m::operator=(Treap&& other) {
+  if (this == &other)
+    return *this;
+  key_ = other.key_;
+  value = other.value;
+  delete left;
+  delete right;
+  left = other.left;
+  right = other.right;
+  return *this;
+}
+
+Treap& m::operator=(const Treap& other) {
+  value = other.value;
+  key_ = other.key_;
+
+  left = other.left == nullptr ? nullptr : other.left->clone();
+  right = other.right == nullptr ? nullptr : other.right->clone();
+  return *this;
+}
 
 void m::free() {
   left  = nullptr;
   right = nullptr;
-  delete this;
 }
 
 void m::insert(int value) {
@@ -26,14 +72,14 @@ void m::insert(int value) {
     this->value.emplace(value);
     return;
   }
-  auto copy_this = new Treap(*this);
-  auto [t1, t2]        = copy_this->split(value);
-  auto* node           = new Treap(value);
+  auto copy_this = *this;
+  auto [t1, t2]  = copy_this.split(value);
+  auto* node     = new Treap(value);
   *this = *(t1 ? node->merge(t1->merge(t2)) : node->merge(t2->merge(t1)));
-  if (node->key_ < copy_this->key_)
+  if (node->key_ < copy_this.key_)
     node->free();
   else
-    copy_this->free();
+    copy_this.free();
 }
 
 m::Treap() : key_(rand()), value(std::nullopt), left(nullptr), right(nullptr) {
