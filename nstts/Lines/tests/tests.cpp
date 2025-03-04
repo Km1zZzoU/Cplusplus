@@ -1,5 +1,6 @@
 #include "../src/Line.h"
 #include "../src/Triple.h"
+#include <cmath>
 #include <gtest/gtest.h>
 
 #include <cstdlib>
@@ -32,6 +33,17 @@ TEST(Perpendicular, Simple) {
   ASSERT_TRUE(Triple(per.C) == Triple(0));
 
   ASSERT_TRUE(!per.intersection(Line(1, 2, 5)).has_value());
+}
+
+TEST(ReviewTest, encapsulation_issue) {
+  Line line(Point(1, 1), Point(1, 1));
+
+  /* Note: you class has an invariant
+   * it is representing correct line in 2D space
+   * but for this case it is not true
+   * it will be whole 2D plane)
+   */
+  ASSERT_TRUE(std::fabs(line.A) + std::fabs(line.B) + std::fabs(line.C) > 0);
 }
 
 int main() {
