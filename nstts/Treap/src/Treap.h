@@ -25,7 +25,7 @@ private:
   Treap*                    merge(Treap* t);
   Treap* clone() const;
 
-  void free();
+  // void free();
 public:
   void insert(int value);
   void remove(int value);

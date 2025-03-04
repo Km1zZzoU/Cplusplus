@@ -62,24 +62,27 @@ Treap& m::operator=(const Treap& other) {
   return *this;
 }
 
-void m::free() {
-  left  = nullptr;
-  right = nullptr;
-}
+// void m::free() {
+//   left  = nullptr;
+//   right = nullptr;
+// }
 
 void m::insert(int value) {
   if (!this->value.has_value()) {
     this->value.emplace(value);
     return;
   }
-  auto copy_this = *this;
-  auto [t1, t2]  = copy_this.split(value);
+  auto copy_this = this->clone();
+  auto [t1, t2]  = copy_this->split(value);
   auto* node     = new Treap(value);
+  delete this->left;
+  delete this->right;
   *this = *(t1 ? node->merge(t1->merge(t2)) : node->merge(t2->merge(t1)));
-  if (node->key_ < copy_this.key_)
-    node->free();
-  else
-    copy_this.free();
+  if (node->key_ < copy_this->key_)
+    delete node;
+  else {
+    delete copy_this;
+  }
 }
 
 m::Treap() : key_(rand()), value(std::nullopt), left(nullptr), right(nullptr) {
