@@ -62,11 +62,6 @@ Treap& m::operator=(const Treap& other) {
   return *this;
 }
 
-// void m::free() {
-//   left  = nullptr;
-//   right = nullptr;
-// }
-
 void m::insert(int value) {
   if (!this->value.has_value()) {
     this->value.emplace(value);
@@ -75,9 +70,9 @@ void m::insert(int value) {
   auto copy_this = this->clone();
   auto [t1, t2]  = copy_this->split(value);
   auto* node     = new Treap(value);
-  delete this->left;
-  delete this->right;
-  *this = *(t1 ? node->merge(t1->merge(t2)) : node->merge(t2->merge(t1)));
+  // delete this->left;
+  // delete this->right;
+  *this = std::move(*(t1 ? node->merge(t1->merge(t2)) : node->merge(t2->merge(t1))));
   if (node->key_ < copy_this->key_)
     delete node;
   else {
