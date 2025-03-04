@@ -12,6 +12,12 @@ bool m::operator==(const Triple& other) const {
   return std::abs(value - other.value) < e;
 }
 
+/* RE: about floating point comparison
+ * Actually `==` works like bitwise comparision 
+ * And it is almost always tricky.
+ * use bitwise comparison only if your know what your doing
+ */
 bool m::operator!=(const Triple& other) const {
+  /* RE: why not this == other */
   return !(value == other.value);
 }
