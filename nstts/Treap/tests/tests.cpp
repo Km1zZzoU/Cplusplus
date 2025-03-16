@@ -4,6 +4,8 @@
 #include <cstdlib>
 #include <vector>
 
+/** RE: please add tests on move and copy assigment operators, move and copy ctrs */
+
 TEST(TreapTests, Init) {
   Treap treap(3);
   ASSERT_TRUE(treap.sum() == 3);
@@ -49,6 +51,18 @@ TEST(TreapTests, BigData1) {
     treap.insert(item);
 
   ASSERT_TRUE(treap.sum() == sum);
+}
+
+TEST(ReviewTest, DanglingPointers) {
+    Treap p(42);
+
+    Treap* q = new Treap(23);
+    q->insert(18);
+    
+    p = std::move(*q);
+    
+    // Here is UB
+    ASSERT_TRUE(p.sum() == 41);
 }
 
 TEST(ReviewTest, RemoveLast) {
