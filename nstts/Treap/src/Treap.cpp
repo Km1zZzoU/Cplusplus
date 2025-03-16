@@ -41,6 +41,14 @@ m::Treap(Treap&& other) : key_(other.key_), value(other.value) {
   other.right = nullptr;
 }
 
+
+/** RE: move assigment operator
+  * Remember - the value wich bounds to rvalue reference
+  * probably die very soon and you need take it to account
+  * when writing move assigment operator
+  *
+  * You need to awoid dangling pointers here
+  */
 Treap& m::operator=(Treap&& other) {
   if (this == &other)
     return *this;
@@ -48,8 +56,8 @@ Treap& m::operator=(Treap&& other) {
   value = other.value;
   delete left;
   delete right;
-  left = other.left;
-  right = other.right;
+  left = other.left;    // RE: if other will die, then left in current class is dangling pointer
+  right = other.right;  // RE: if other will die, then left in current class is dangling pointer
   return *this;
 }
 
@@ -62,16 +70,26 @@ Treap& m::operator=(const Treap& other) {
   return *this;
 }
 
+/** RE: this operation should run in O(logN) time
+  * but because of clone() it always runs in O(N)
+  * actually cloning here is redundant operation
+  * Try to avoid it here.
+  *
+  * And if you find youself stuck to do it - text me and I'll help
+  */
 void m::insert(int value) {
   if (!this->value.has_value()) {
     this->value.emplace(value);
     return;
   }
+
   auto copy_this = this->clone();
   auto [t1, t2]  = copy_this->split(value);
   auto* node     = new Treap(value);
   // delete this->left;
   // delete this->right;
+
+  // Note: this line is really hard to read and debug
   *this = std::move(*(t1 ? node->merge(t1->merge(t2)) : node->merge(t2->merge(t1))));
   if (node->key_ < copy_this->key_)
     delete node;
@@ -80,6 +98,49 @@ void m::insert(int value) {
   }
 }
 
+
+/** Note: about random in C++ 
+  *  Your data structure is probabilistic, and it's guaranties by time complixety
+  *  depends on 'uniform' distribution of priorities 
+  *  (in your implementation they called key's but for me priority is more convinient).
+  *  By 'priorities distributed uniformly' we mean that all priorities have the same probability.
+  *
+  *  So for Treap it is important to think about priority generation.
+  *
+  *  And lets talk about random generators in C++
+  *
+  *  Generator - it is deterministic thing that generates sequence
+  *  of numbers which looks like random numbers
+  *
+  *  So lets focus on word 'deterministic'. Such generators have
+  *  a special parameter called 'seed'. It is used to generate different sequences
+  *
+  *  It means that two runs of generator with the same seeds yields some squences
+  *
+  *  For your data structure it means that for one treap sequence of random numbers
+  *  will be the same for every run of program.
+  *
+  *  And also here can be problems with 'uniformity' of your sequences. 
+  *  Firstly generator that you use not really good in that.
+  *  It would be better to use mt19937 generator. 
+  *
+  *  Also 'uniformity' can be broken by type casts
+  *  Generator yields numbers in range [0, RAND_MAX],
+  *  where the RAND_MAX is some constant
+  *
+  *  On the other hand standart doesn't say that this constant fits to int 
+  *
+  *  So here can be overflow, and integer overflow architecture dependent thing too. It means
+  *  that we don't know how actually integer will be overflowed.
+  *  And it might leads us to lose of 'uniformity' of random sequences.
+  *  After overflow some numbers will be generated with greater probability than the others
+  *
+  *  It's been a long backstory about why working with random numbers is trickier than it seems
+  *
+  *  But C++ has nice api for make this work easier! See reviewExamples/random.cpp example
+  *  It is just note, no need to fix it right now)  
+  */
+    
 m::Treap() : key_(rand()), value(std::nullopt), left(nullptr), right(nullptr) {
 }
 

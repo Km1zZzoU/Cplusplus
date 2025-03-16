@@ -51,6 +51,26 @@ TEST(TreapTests, BigData1) {
   ASSERT_TRUE(treap.sum() == sum);
 }
 
+TEST(ReviewTest, RemoveLast) {
+  Treap treap;
+  treap.insert(42);
+  treap.remove(42);
+}
+
+TEST(ReviewTest, Im_User_and_Im_dumb_and_Im_doing_what_I_want) {
+  int test_size = 10000;
+  Treap* treap = new Treap(0);
+
+  // large, super non-BST, totally unbalanced Treap 
+  Treap* curr = treap;
+  for (std::size_t i = 1; i < test_size; i++) {
+      curr->left = new Treap(i); // in the left sub-tree values always large than in the root
+      curr = curr->left;
+  }
+
+  delete treap;
+}
+
 int main() {
   ::testing::InitGoogleTest();
   return RUN_ALL_TESTS();
