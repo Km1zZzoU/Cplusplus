@@ -4,7 +4,6 @@
 int main() {
   Treap treap(42);
   treap.insert(1);
-  std::cout << treap.sum() << std::endl;
   treap.insert(4);
   std::cout << treap.sum() << std::endl;
   treap.insert(5);
