@@ -10,6 +10,7 @@ add_compile_options(${SANITIZER_FLAGS})
 add_link_options(${SANITIZER_FLAGS})
 
 
+# Note: this CMakeLists is broken : (
 add_executable(main main.cpp)
 
 add_subdirectory(src)
