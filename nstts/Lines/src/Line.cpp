@@ -3,12 +3,24 @@
 #include <optional>
 using m = Line;
 
+/* RE: invariants and encapsulation
+ * Your line class should have this invariant:
+ * it is represents line in two dimentional space.
+ * And constructors of your class should construct
+ * class where invariant is keeping
+ * But for this constr it is not true
+ *
+ * See my test 
+ * --
+ * And again 'const' modifier in argument signature of primitive types is redundant
+ */
 m::Line(const double A, const double B, const double C) {
   this->A = A;
   this->B = B;
   this->C = C;
 }
 
+/* RE: same as above */
 m::Line(const Point& p1, const Point& p2) {
   // px + y + q = 0
   // p = a/b q = c/b

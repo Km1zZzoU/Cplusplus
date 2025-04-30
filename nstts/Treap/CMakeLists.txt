@@ -1,10 +1,10 @@
-cmake_minimum_required(VERSION 3.29)
+cmake_minimum_required(VERSION 3.14)
 project(Treap)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(SANITIZER_FLAGS "-fsanitize=address,undefined")
+set(SANITIZER_FLAGS "-fsanitize=address,undefined,leak")
 
 add_compile_options(${SANITIZER_FLAGS})
 add_link_options(${SANITIZER_FLAGS})

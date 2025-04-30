@@ -10,11 +10,13 @@ add_compile_options(${SANITIZER_FLAGS})
 add_link_options(${SANITIZER_FLAGS})
 
 
+# RE: no main(
+# pls fix cmake..
 add_executable(main main.cpp)
 
 add_subdirectory(src)
 
-target_link_libraries(main lines_src)
+target_link_libraries(lines_src)
 
 add_subdirectory(tests)
 
